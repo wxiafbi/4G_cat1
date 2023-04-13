@@ -231,7 +231,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         if (Uart1_Rx_Cnt >= 19) {
             /* code */
             HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&RxBuffer, Uart1_Rx_Cnt);
-            memset(RxBuffer, 0, Uart1_Rx_Cnt);
+            while (HAL_UART_GetState(&huart1) == HAL_UART_STATE_BUSY_TX)
+                ; // ºÏ≤‚UART∑¢ÀÕΩ· ¯
+            memset(RxBuffer, 0, 256);
             Uart1_Rx_Cnt = 0;
         }
     }
