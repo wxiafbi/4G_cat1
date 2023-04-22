@@ -193,7 +193,7 @@ void oled_show(void)
     // OLED_ShowString(8, 16, "ZHONGJINGYUAN", 16, 1);
     // OLED_ShowString(20, 32, "2014/05/01", 16, 1);
     OLED_ShowString(0, 48, "ASCII:", 16, 1);
-    OLED_ShowString(0, 0, DATA, 16, 1);
+    OLED_ShowString(0, 0, show_DATA, 16, 1);
     // OLED_ShowChar(54, 0, Uart1_Rx_Cnt, 24, 1); // ÏÔÊ¾ASCII×Ö·û
     // t++;
     // if (t > '~') t = ' ';
@@ -248,7 +248,8 @@ void Data_parsing(void)
         DATA[i] = RxBuffer[i];
     }
     HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&DATA, Uart1_Rx_Cnt);
-    
+    show_flag++;
+    show_parsing();
     memset(RxBuffer, 0, Uart1_Rx_Cnt);
 }
 
@@ -256,8 +257,14 @@ void show_parsing(void)
 {
     if (show_flag != 0) {
         /* code */
-        memset(show_DATA, 0, Uart1_Rx_Cnt);
+        HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
+        // OLED_DisPlay_Off();
+        // OLED_DisPlay_On();
+        // OLED_Clear();
+        OLED_Refresh();
+        memset(show_DATA, 0, 100);
         HAL_DMA_Start(&hdma_memtomem_dma1_channel1, (uint32_t)DATA, (uint32_t)show_DATA, 12);
+        HAL_UART_Transmit(&huart1,(uint8_t *)show_DATA[0],2,0xffff);
         show_flag = 0;
     }
 }
