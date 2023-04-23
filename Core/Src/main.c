@@ -262,8 +262,14 @@ void show_parsing(void)
 {
     if (show_flag != 0) {
         /* code */
-        memset(show_DATA, 0, Uart1_Rx_Cnt);
+        HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
+        // OLED_DisPlay_Off();
+        // OLED_DisPlay_On();
+        // OLED_Clear();
+        OLED_Refresh();
+        memset(show_DATA, 0, 100);
         HAL_DMA_Start(&hdma_memtomem_dma1_channel1, (uint32_t)DATA, (uint32_t)show_DATA, 12);
+        HAL_UART_Transmit(&huart1,(uint8_t *)show_DATA[0],2,0xffff);
         show_flag = 0;
     }
 }
